@@ -15,7 +15,7 @@ function AdPanel() {
           </p>
           <a
             className="mt-6 inline-flex rounded-full bg-brand-500 px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-600"
-            href="https://example.com"
+            href="https://www.vappyshop.com/"
             target="_blank"
             rel="noreferrer"
           >
@@ -23,7 +23,7 @@ function AdPanel() {
           </a>
         </div>
         <div className="p-4">
-          <img className="w-full rounded-[1.5rem]" src="/vappy-banner.svg" alt="Vappy Shop banner" />
+          <img className="w-full rounded-[1.5rem]" src="https://www.vappyshop.com/static/media/512x512%20px.b66372c34e6d3462ca0f.png" alt="Vappy Shop banner" />
         </div>
       </div>
     </aside>

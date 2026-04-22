@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 const app = express();
 const clientBuildPath = path.resolve(__dirname, '..', 'client', 'dist');
 
-function parseAllowedOrigins() {
+function parseConfiguredOrigins() {
   const configuredOrigins = [process.env.CLIENT_URLS, process.env.CLIENT_URL]
     .filter(Boolean)
     .flatMap((value) => value.split(','))
@@ -23,12 +23,42 @@ function parseAllowedOrigins() {
   return ['http://localhost:5173'];
 }
 
-const allowedOrigins = new Set(parseAllowedOrigins());
+function normalizeOrigin(origin) {
+  return origin.replace(/\/$/, '');
+}
+
+function createOriginMatcher(pattern) {
+  const normalizedPattern = normalizeOrigin(pattern);
+
+  if (normalizedPattern.includes('*')) {
+    const escapedPattern = normalizedPattern
+      .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+      .replace(/\*/g, '.*');
+
+    return new RegExp(`^${escapedPattern}$`);
+  }
+
+  return normalizedPattern;
+}
+
+const allowedOriginMatchers = parseConfiguredOrigins().map(createOriginMatcher);
+
+function isAllowedOrigin(origin) {
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  return allowedOriginMatchers.some((matcher) => {
+    if (matcher instanceof RegExp) {
+      return matcher.test(normalizedOrigin);
+    }
+
+    return matcher === normalizedOrigin;
+  });
+}
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
+      if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
         return;
       }
