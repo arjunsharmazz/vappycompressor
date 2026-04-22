@@ -7,12 +7,34 @@ const fileRoutes = require('./routes/fileRoutes');
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const app = express();
-const clientOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
 const clientBuildPath = path.resolve(__dirname, '..', 'client', 'dist');
+
+function parseAllowedOrigins() {
+  const configuredOrigins = [process.env.CLIENT_URLS, process.env.CLIENT_URL]
+    .filter(Boolean)
+    .flatMap((value) => value.split(','))
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  if (configuredOrigins.length) {
+    return configuredOrigins;
+  }
+
+  return ['http://localhost:5173'];
+}
+
+const allowedOrigins = new Set(parseAllowedOrigins());
 
 app.use(
   cors({
-    origin: clientOrigin,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error('This origin is not allowed to access the API.'));
+    },
   }),
 );
 app.use(express.json({ limit: '1mb' }));

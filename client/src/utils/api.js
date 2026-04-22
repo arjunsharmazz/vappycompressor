@@ -2,6 +2,12 @@ const JSON_HEADERS = {
   Accept: 'application/json',
 };
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
+function buildApiUrl(path) {
+  return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+}
+
 function appendFiles(formData, files, quality) {
   files.forEach((file) => {
     formData.append('images', file);
@@ -30,7 +36,7 @@ export async function compressImages(files, quality) {
   const formData = new FormData();
   appendFiles(formData, files, quality);
 
-  const response = await fetch('/api/compress-image', {
+  const response = await fetch(buildApiUrl('/api/compress-image'), {
     method: 'POST',
     body: formData,
     headers: JSON_HEADERS,
@@ -44,7 +50,7 @@ export async function downloadZip(files, quality) {
   const formData = new FormData();
   appendFiles(formData, files, quality);
 
-  const response = await fetch('/api/download-zip', {
+  const response = await fetch(buildApiUrl('/api/download-zip'), {
     method: 'POST',
     body: formData,
   });
@@ -59,7 +65,7 @@ export async function convertPdf(files) {
     formData.append('images', file);
   });
 
-  const response = await fetch('/api/convert-pdf', {
+  const response = await fetch(buildApiUrl('/api/convert-pdf'), {
     method: 'POST',
     body: formData,
   });
