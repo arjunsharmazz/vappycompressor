@@ -7,6 +7,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^123.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -14,6 +15,7 @@
     "mime-types": "^2.1.35",
     "multer": "^2.0.2",
     "pdf-lib": "^1.17.1",
+    "puppeteer-core": "^23.11.1",
     "sharp": "^0.33.5"
   },
   "devDependencies": {

@@ -2,6 +2,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const express = require('express');
 const path = require('path');
+const builderRoutes = require('./routes/builderRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
@@ -67,12 +68,14 @@ app.use(
     },
   }),
 );
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '20mb' }));
 
 app.get('/api/health', (_request, response) => {
   response.json({ status: 'ok' });
 });
 
+app.use('/api/builder', builderRoutes);
+app.use('/builder', builderRoutes);
 app.use('/api', fileRoutes);
 
 app.use((error, _request, response, _next) => {
